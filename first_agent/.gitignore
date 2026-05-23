@@ -1,0 +1,29 @@
+# API keys — NEVER commit this
+.env
+
+# Uploaded videos (can be large)
+uploads/
+assets/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Test artifacts
+test_sketch.jpg
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

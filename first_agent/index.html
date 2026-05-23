@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ReelDNA — Content Production Studio</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #080808;
+      --surface: #111111;
+      --surface2: #181818;
+      --border: #222222;
+      --border2: #2a2a2a;
+      --text: #f2f2f2;
+      --text2: #888;
+      --text3: #555;
+      --accent: #ff5c00;
+      --accent2: #ff9500;
+      --grad: linear-gradient(135deg, #ff5c00, #ff9500);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: sticky; top: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 32px;
+      height: 56px;
+      background: rgba(8,8,8,0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo {
+      font-weight: 900;
+      font-size: 1.1rem;
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-badge {
+      font-size: 0.7rem;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 20px;
+      padding: 4px 12px;
+      color: var(--text2);
+      letter-spacing: 0.05em;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      text-align: center;
+      padding: 72px 24px 56px;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+      background: rgba(255,92,0,0.08);
+      border: 1px solid rgba(255,92,0,0.2);
+      border-radius: 20px;
+      padding: 5px 14px;
+      margin-bottom: 24px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -2px;
+      margin-bottom: 16px;
+    }
+
+    .hero h1 span {
+      background: var(--grad);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 1rem;
+      color: var(--text2);
+      line-height: 1.6;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px 100px;
+    }
+
+    /* ── STEP INDICATOR ── */
+    .steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 40px;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border2);
+      margin: 0 16px;
+    }
+
+    .step-num {
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text3);
+      flex-shrink: 0;
+      transition: all 0.3s;
+    }
+
+    .step.active .step-num {
+      background: var(--grad);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    .step.done .step-num {
+      background: #1a3a1a;
+      border-color: #2a5a2a;
+      color: #4caf50;
+    }
+
+    .step-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text3);
+      white-space: nowrap;
+      transition: color 0.3s;
+    }
+    .step.active .step-label { color: var(--text); }
+    .step.done .step-label { color: #4caf50; }
+
+    /* ── PANELS ── */
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    .panel.visible { display: block; }
+
+    .panel-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text3);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel-title::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── CREATOR GRID ── */
+    .creator-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .creator-card {
+      background: var(--surface2);
+      border: 2px solid var(--border);
+      border-radius: 14px;
+      padding: 18px 14px;
+      cursor: pointer;
+      transition: all 0.18s;
+      text-align: center;
+      position: relative;
+    }
+    .creator-card:hover {
+      border-color: var(--border2);
+      background: #1a1a1a;
+      transform: translateY(-2px);
+    }
+    .creator-card.selected {
+      border-color: var(--accent);
+      background: rgba(255,92,0,0.06);
+    }
+    .creator-card.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 8px; right: 10px;
+      font-size: 0.7rem;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .creator-emoji { font-size: 1.8rem; margin-bottom: 8px; }
+    .creator-name { font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; }
+    .creator-tagline { font-size: 0.7rem; color: var(--text3); line-height: 1.3; }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin: 20px 0;
+      color: var(--text3);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+    .divider::before, .divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── UPLOAD ZONE ── */
+    .upload-zone {
+      border: 2px dashed var(--border2);
+      border-radius: 14px;
+      padding: 28px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+    .upload-zone:hover { border-color: var(--accent); background: rgba(255,92,0,0.03); }
+    .upload-zone.has-file { border-color: #2a5a2a; background: rgba(76,175,80,0.04); }
+    .upload-zone input[type="file"] {
+      position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+    .upload-icon { font-size: 1.8rem; margin-bottom: 8px; }
+    .upload-text { font-size: 0.9rem; color: var(--text2); }
+    .upload-sub { font-size: 0.75rem; color: var(--text3); margin-top: 4px; }
+    .upload-filename { font-size: 0.85rem; color: #4caf50; font-weight: 600; margin-top: 8px; }
+
+    /* ── IDEA INPUT ── */
+    .idea-wrap { position: relative; }
+
+    textarea#idea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 14px;
+      color: var(--text);
+      font-family: inherit;
+      font-size: 1rem;
+      line-height: 1.6;
+      padding: 16px 18px;
+      resize: none;
+      min-height: 80px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    textarea#idea:focus { border-color: var(--accent); }
+    textarea#idea::placeholder { color: var(--text3); }
+
+    .char-count {
+      position: absolute;
+      bottom: 12px; right: 14px;
+      font-size: 0.7rem;
+      color: var(--text3);
+    }
+
+    /* ── GENERATE BUTTON ── */
+    .generate-btn {
+      width: 100%;
+      padding: 16px;
+      background: var(--grad);
+      border: none;
+      border-radius: 14px;
+      color: #fff;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+    .generate-btn:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+    .generate-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+
+    /* ── STATUS BAR ── */
+    .status-bar {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-top: 16px;
+      font-size: 0.9rem;
+      color: var(--text2);
+    }
+    .status-bar.visible { display: flex; }
+
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid var(--border2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── STORYBOARD ── */
+    #storyboard-section { display: none; margin-top: 32px; }
+
+    .sb-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 24px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .sb-meta-left { display: flex; align-items: center; gap: 12px; }
+
+    .sb-title { font-size: 1.1rem; font-weight: 800; }
+
+    .creator-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      background: rgba(255,92,0,0.1);
+      border: 1px solid rgba(255,92,0,0.25);
+      color: var(--accent2);
+      border-radius: 20px;
+      padding: 4px 12px;
+      font-weight: 600;
+    }
+
+    .sb-actions { display: flex; gap: 10px; }
+
+    .action-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      color: var(--text2);
+      padding: 8px 16px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .action-btn:hover { background: #1e1e1e; color: var(--text); border-color: #333; }
+
+    /* ── TIMELINE ── */
+    .timeline-track {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 28px;
+      height: 4px;
+    }
+    .tl-seg {
+      flex: 1;
+      border-radius: 2px;
+      background: var(--border2);
+      transition: background 0.3s;
+    }
+    .tl-seg.lit { background: var(--grad); }
+
+    /* ── SCENE CARDS ── */
+    .scenes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .scene-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: border-color 0.2s, transform 0.15s;
+    }
+    .scene-card:hover { border-color: var(--border2); transform: translateY(-2px); }
+    .scene-card.open { border-color: var(--accent); }
+
+    .card-top {
+      padding: 18px 20px 14px;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+    .scene-card.open .card-top { border-color: var(--border); }
+
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .scene-num-badge {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      background: rgba(255,92,0,0.1);
+      border-radius: 6px;
+      padding: 3px 8px;
+    }
+
+    .timestamp-badge {
+      font-size: 0.7rem;
+      color: var(--text3);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 3px 8px;
+      font-weight: 600;
+    }
+
+    .scene-label {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+      letter-spacing: -0.3px;
+    }
+
+    .shot-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.7rem;
+      color: var(--text2);
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 3px 10px;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .action-text {
+      font-size: 0.875rem;
+      color: #bbb;
+      line-height: 1.55;
+    }
+
+    .expand-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      font-size: 0.7rem;
+      color: var(--text3);
+      margin-top: 14px;
+      transition: color 0.2s;
+    }
+    .scene-card.open .expand-toggle { color: var(--accent); }
+    .expand-arrow { transition: transform 0.2s; }
+    .scene-card.open .expand-arrow { transform: rotate(180deg); }
+
+    /* ── CARD DETAILS ── */
+    .card-details {
+      display: none;
+      padding: 16px 20px 20px;
+    }
+    .scene-card.open .card-details { display: block; }
+
+    .detail-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .detail-item {
+      display: grid;
+      grid-template-columns: 28px 1fr;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .detail-icon-box {
+      width: 28px; height: 28px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.9rem;
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .detail-content {}
+    .detail-label {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text3);
+      margin-bottom: 3px;
+    }
+    .detail-value {
+      font-size: 0.85rem;
+      color: #ccc;
+      line-height: 1.5;
+    }
+
+    .dialogue-quote {
+      font-style: italic;
+      color: #ddd;
+      border-left: 2px solid var(--accent);
+      padding-left: 10px;
+      font-size: 0.85rem;
+      line-height: 1.5;
+    }
+
+    .overlay-pill {
+      display: inline-block;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 6px;
+      padding: 5px 12px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .none-tag {
+      font-size: 0.8rem;
+      color: var(--text3);
+      font-style: italic;
+    }
+
+    /* ── IMAGEN SKETCHES ── */
+    .sketch-wrap {
+      margin-bottom: 16px;
+    }
+
+    .scene-sketch {
+      width: 100%;
+      border-radius: 10px;
+      border: 1px solid var(--border2);
+      display: block;
+      background: #fff;
+    }
+
+    .sketch-placeholder {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: var(--surface2);
+      border: 1px dashed var(--border2);
+      border-radius: 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      color: var(--text3);
+      gap: 4px;
+      text-align: center;
+    }
+
+    .sketch-failed {
+      border-color: #3a2a2a;
+      background: #1a1212;
+      color: #664444;
+    }
+
+    /* ── RESET LINK ── */
+    .reset-link {
+      display: block;
+      text-align: center;
+      margin-top: 32px;
+      font-size: 0.85rem;
+      color: var(--text3);
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+    .reset-link:hover { color: var(--text2); }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <div class="logo">⚡ ReelDNA</div>
+    <div class="nav-badge">HACKATHON DEMO</div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">🎬 AI Content Production Studio</div>
+    <h1>Turn any idea into a<br/><span>production blueprint</span></h1>
+    <p>Pick a creator style, enter your idea, and get a scene-by-scene storyboard tailored to their exact DNA.</p>
+  </div>
+
+  <div class="main">
+
+    <!-- STEP INDICATORS -->
+    <div class="steps" id="steps">
+      <div class="step active" id="step1">
+        <div class="step-num">1</div>
+        <div class="step-label">Choose Style</div>
+        <div style="flex:1;height:1px;background:var(--border2);margin:0 16px;"></div>
+      </div>
+      <div class="step" id="step2">
+        <div class="step-num">2</div>
+        <div class="step-label">Your Idea</div>
+        <div style="flex:1;height:1px;background:var(--border2);margin:0 16px;"></div>
+      </div>
+      <div class="step" id="step3">
+        <div class="step-num">3</div>
+        <div class="step-label">Storyboard</div>
+      </div>
+    </div>
+
+    <!-- PANEL 1: CHOOSE STYLE -->
+    <div class="panel visible" id="panel1">
+      <div class="panel-title">Choose a creator style</div>
+      <div class="creator-grid" id="creatorGrid">
+        <!-- populated by JS -->
+      </div>
+
+      <div class="divider">or upload your own reference video</div>
+
+      <div class="upload-zone" id="uploadZone">
+        <input type="file" id="videoFile" accept="video/*" onchange="onFileSelect(this)"/>
+        <div class="upload-icon">🎬</div>
+        <div class="upload-text">Drop an MP4 to extract DNA from a real creator</div>
+        <div class="upload-sub">Under 30 seconds works best</div>
+        <div class="upload-filename" id="fileLabel"></div>
+      </div>
+
+      <button class="generate-btn" onclick="goToStep2()" style="margin-top:24px;">
+        Continue →
+      </button>
+    </div>
+
+    <!-- PANEL 2: YOUR IDEA -->
+    <div class="panel" id="panel2">
+      <div class="panel-title">Enter your video idea</div>
+      <div class="idea-wrap">
+        <textarea id="idea" placeholder="e.g. A video explaining how mechanical watches work without a battery." maxlength="400" oninput="updateCharCount()"></textarea>
+        <div class="char-count"><span id="charCount">0</span>/400</div>
+      </div>
+
+      <button class="generate-btn" id="generateBtn" onclick="generate()">
+        <span>⚡ Generate Storyboard</span>
+      </button>
+
+      <div class="status-bar" id="statusBar">
+        <div class="spinner"></div>
+        <span id="statusText">Initialising…</span>
+      </div>
+    </div>
+
+    <!-- STORYBOARD -->
+    <div id="storyboard-section">
+      <div class="sb-meta">
+        <div class="sb-meta-left">
+          <div class="sb-title">Production Storyboard</div>
+          <div class="creator-tag" id="creatorTag"></div>
+        </div>
+        <div class="sb-actions">
+          <button class="action-btn" onclick="exportJSON()">⬇ Export JSON</button>
+          <button class="action-btn" onclick="resetAll()">↩ New Project</button>
+        </div>
+      </div>
+
+      <div class="timeline-track" id="timeline"></div>
+      <div class="scenes-grid" id="scenesGrid"></div>
+
+      <div class="reset-link" onclick="resetAll()">Start over with a new idea</div>
+    </div>
+
+  </div><!-- /main -->
+
+  <script>
+    // ── STATE ──
+    let selectedPreset = null;
+    let storyboardData = [];
+
+    const CREATOR_PRESETS = {}; // populated from server
+
+    // ── BOOT: load presets ──
+    async function loadPresets() {
+      try {
+        const res = await fetch("/presets");
+        const data = await res.json();
+        Object.assign(CREATOR_PRESETS, data);
+        renderCreatorGrid(data);
+      } catch(e) {
+        // Fallback inline presets if server isn't up
+        const fallback = {
+          vox:       { name:"Vox",       emoji:"📰", tagline:"Documentary deep-dive" },
+          mrbeast:   { name:"MrBeast",   emoji:"🔥", tagline:"High-energy challenge" },
+          mkbhd:     { name:"MKBHD",     emoji:"📱", tagline:"Cinematic tech review" },
+          aliabdaal: { name:"Ali Abdaal",emoji:"📚", tagline:"Calm educational" },
+          nasdaily:  { name:"Nas Daily", emoji:"🌍", tagline:"Inspirational travel" },
+          kurzgesagt:{ name:"Kurzgesagt",emoji:"🎨", tagline:"Animated explainer" },
+        };
+        Object.assign(CREATOR_PRESETS, fallback);
+        renderCreatorGrid(fallback);
+      }
+    }
+
+    function renderCreatorGrid(presets) {
+      const grid = document.getElementById("creatorGrid");
+      grid.innerHTML = "";
+      for (const [key, p] of Object.entries(presets)) {
+        const card = document.createElement("div");
+        card.className = "creator-card";
+        card.dataset.key = key;
+        card.onclick = () => selectPreset(key, card);
+        card.innerHTML = `
+          <div class="creator-emoji">${p.emoji}</div>
+          <div class="creator-name">${p.name}</div>
+          <div class="creator-tagline">${p.tagline}</div>
+        `;
+        grid.appendChild(card);
+      }
+    }
+
+    function selectPreset(key, card) {
+      document.querySelectorAll(".creator-card").forEach(c => c.classList.remove("selected"));
+      if (selectedPreset === key) {
+        selectedPreset = null;
+      } else {
+        selectedPreset = key;
+        card.classList.add("selected");
+        // Clear file input if a preset is chosen
+        document.getElementById("videoFile").value = "";
+        document.getElementById("fileLabel").textContent = "";
+        document.getElementById("uploadZone").classList.remove("has-file");
+      }
+    }
+
+    function onFileSelect(input) {
+      const label = document.getElementById("fileLabel");
+      if (input.files[0]) {
+        label.textContent = "✓ " + input.files[0].name;
+        document.getElementById("uploadZone").classList.add("has-file");
+        // Deselect preset
+        selectedPreset = null;
+        document.querySelectorAll(".creator-card").forEach(c => c.classList.remove("selected"));
+      } else {
+        label.textContent = "";
+        document.getElementById("uploadZone").classList.remove("has-file");
+      }
+    }
+
+    function goToStep2() {
+      const hasFile = document.getElementById("videoFile").files[0];
+      if (!selectedPreset && !hasFile) {
+        alert("Please select a creator style or upload a reference video first.");
+        return;
+      }
+      document.getElementById("panel1").classList.remove("visible");
+      document.getElementById("panel2").classList.add("visible");
+      setStep(2);
+      document.getElementById("idea").focus();
+    }
+
+    function updateCharCount() {
+      const len = document.getElementById("idea").value.length;
+      document.getElementById("charCount").textContent = len;
+    }
+
+    // ── GENERATE ──
+    async function generate() {
+      const idea = document.getElementById("idea").value.trim();
+      if (!idea) { alert("Please enter your video idea."); return; }
+
+      const btn = document.getElementById("generateBtn");
+      const statusBar = document.getElementById("statusBar");
+      const statusText = document.getElementById("statusText");
+
+      btn.disabled = true;
+      statusBar.classList.add("visible");
+      document.getElementById("storyboard-section").style.display = "none";
+
+      const steps = [
+        "Uploading reference video…",
+        "Extracting creator DNA…",
+        "Mapping hook formula…",
+        "Writing your scenes…",
+        "Building storyboard…",
+      ];
+      let si = 0;
+      statusText.textContent = steps[si];
+      const ticker = setInterval(() => { si=(si+1)%steps.length; statusText.textContent=steps[si]; }, 2400);
+
+      try {
+        const formData = new FormData();
+        formData.append("idea", idea);
+        if (selectedPreset) formData.append("preset", selectedPreset);
+        const fileInput = document.getElementById("videoFile");
+        if (fileInput.files[0]) formData.append("video", fileInput.files[0]);
+
+        const res = await fetch("/analyze", { method:"POST", body:formData });
+        const data = await res.json();
+        clearInterval(ticker);
+
+        if (data.scenes && data.scenes.length) {
+          storyboardData = data.scenes;
+          renderStoryboard(data.scenes, data.meta);
+          statusBar.classList.remove("visible");
+          setStep(3);
+        } else if (data.raw) {
+          statusText.textContent = "Note: returned as raw text";
+          alert("The model returned unstructured text. Raw output:\n\n" + data.raw.slice(0, 600));
+        } else {
+          statusText.textContent = "Error: " + (data.error || "Unknown");
+        }
+
+      } catch(e) {
+        clearInterval(ticker);
+        statusText.textContent = "Cannot connect. Is server.py running?";
+      }
+
+      btn.disabled = false;
+    }
+
+    // ── RENDER STORYBOARD ──
+    function renderStoryboard(scenes, meta) {
+      const grid = document.getElementById("scenesGrid");
+      const timeline = document.getElementById("timeline");
+      const creatorTag = document.getElementById("creatorTag");
+
+      grid.innerHTML = "";
+      timeline.innerHTML = "";
+
+      // Creator tag
+      if (meta && meta.creator) {
+        const preset = selectedPreset ? CREATOR_PRESETS[selectedPreset] : null;
+        creatorTag.innerHTML = `${preset ? preset.emoji + " " : ""}${meta.creator} DNA`;
+      }
+
+      scenes.forEach((scene, idx) => {
+        // Timeline segment
+        const seg = document.createElement("div");
+        seg.className = "tl-seg";
+        seg.id = "tl-" + idx;
+        timeline.appendChild(seg);
+
+        // Card
+        const card = document.createElement("div");
+        card.className = "scene-card";
+        card.dataset.idx = idx;
+        card.onclick = () => toggleCard(card, idx);
+
+        const dialogueHTML = scene.dialogue
+          ? `<div class="dialogue-quote">${esc(scene.dialogue)}</div>`
+          : `<span class="none-tag">Silent scene</span>`;
+
+        const overlayHTML = scene.text_on_screen
+          ? `<div class="overlay-pill">"${esc(scene.text_on_screen)}"</div>`
+          : `<span class="none-tag">No text overlay</span>`;
+
+        // Imagen 3 sketch — show image if available, placeholder if not
+        const sketchHTML = scene.image_base64
+          ? `<img src="${scene.image_base64}" class="scene-sketch" alt="Storyboard sketch for scene ${scene.scene}" />`
+          : (idx < 3
+              ? `<div class="sketch-placeholder sketch-failed">✏️ Sketch unavailable</div>`
+              : `<div class="sketch-placeholder">✏️ Sketch not generated<br/><span style="font-size:0.7rem;color:var(--text3)">Only first 3 scenes are sketched</span></div>`
+            );
+
+        card.innerHTML = `
+          <div class="card-top">
+            <div class="card-header">
+              <div class="scene-num-badge">Scene ${scene.scene}</div>
+              <div class="timestamp-badge">⏱ ${esc(scene.timestamp)}</div>
+            </div>
+            <div class="scene-label">${esc(scene.label)}</div>
+            <div class="shot-chip">📷 ${esc(scene.shot_type)}</div>
+            <div class="action-text">${esc(scene.action)}</div>
+            <div class="expand-toggle">
+              Details <span class="expand-arrow">▾</span>
+            </div>
+          </div>
+
+          <div class="card-details">
+            <div class="sketch-wrap">${sketchHTML}</div>
+            <div class="detail-grid">
+              <div class="detail-item">
+                <div class="detail-icon-box">🎙</div>
+                <div class="detail-content">
+                  <div class="detail-label">Dialogue</div>
+                  <div class="detail-value">${dialogueHTML}</div>
+                </div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon-box">🖼</div>
+                <div class="detail-content">
+                  <div class="detail-label">Text on Screen</div>
+                  <div class="detail-value">${overlayHTML}</div>
+                </div>
+              </div>
+              <div class="detail-item">
+                <div class="detail-icon-box">🎵</div>
+                <div class="detail-content">
+                  <div class="detail-label">Audio</div>
+                  <div class="detail-value">${esc(scene.audio)}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+
+        grid.appendChild(card);
+      });
+
+      document.getElementById("storyboard-section").style.display = "block";
+      document.getElementById("storyboard-section").scrollIntoView({ behavior:"smooth", block:"start" });
+    }
+
+    function toggleCard(card, idx) {
+      const open = card.classList.toggle("open");
+      document.getElementById("tl-" + idx).classList.toggle("lit", open);
+    }
+
+    // ── UTILS ──
+    function setStep(n) {
+      [1,2,3].forEach(i => {
+        const el = document.getElementById("step" + i);
+        el.classList.remove("active","done");
+        if (i < n) el.classList.add("done");
+        if (i === n) el.classList.add("active");
+      });
+    }
+
+    function resetAll() {
+      selectedPreset = null;
+      storyboardData = [];
+      document.getElementById("panel2").classList.remove("visible");
+      document.getElementById("panel1").classList.add("visible");
+      document.getElementById("storyboard-section").style.display = "none";
+      document.getElementById("idea").value = "";
+      document.getElementById("charCount").textContent = "0";
+      document.getElementById("videoFile").value = "";
+      document.getElementById("fileLabel").textContent = "";
+      document.getElementById("uploadZone").classList.remove("has-file");
+      document.querySelectorAll(".creator-card").forEach(c => c.classList.remove("selected"));
+      document.getElementById("statusBar").classList.remove("visible");
+      document.getElementById("generateBtn").disabled = false;
+      setStep(1);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function exportJSON() {
+      const blob = new Blob([JSON.stringify(storyboardData, null, 2)], { type:"application/json" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "reeldna-storyboard.json";
+      a.click();
+    }
+
+    function esc(str) {
+      return String(str||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+    }
+
+    document.getElementById("idea").addEventListener("keydown", e => {
+      if (e.key === "Enter" && e.ctrlKey) generate();
+    });
+
+    // Boot
+    loadPresets();
+  </script>
+
+</body>
+</html>
