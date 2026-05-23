@@ -2,6 +2,7 @@ import os
 import json
 import time
 import base64
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from flask import Flask, request, jsonify, send_from_directory
 from flask_cors import CORS
 from dotenv import load_dotenv
@@ -230,7 +231,7 @@ def analyze():
 
         interaction = client.interactions.create(
             agent="antigravity-preview-05-2026",
-            model="gemini-2.5-flash",
+            model="gemini-3.5-flash",
             input=input_payload,
             environment="remote"
         )
@@ -240,7 +241,7 @@ def analyze():
         print(f"[Managed Agent unavailable: {e}] — using direct API")
         contents = [uploaded_gemini_file, prompt_text] if uploaded_gemini_file else [prompt_text]
         response = client.models.generate_content(
-            model="gemini-2.5-flash",
+            model="gemini-3.5-flash",
             contents=contents
         )
         raw = response.text
@@ -250,19 +251,31 @@ def analyze():
     except Exception as e:
         return jsonify({"error": f"JSON parse failed: {e}", "raw": raw}), 500
 
-    # ── STEP 2: Generate Imagen 3 sketches for first 3 scenes ───────
-    print("Generating Imagen 3 storyboard sketches...")
-    for i, scene in enumerate(scenes):
-        if i >= 3:
-            scene["image_base64"] = None
-            continue
+    # ── STEP 2: Generate Imagen 4 sketches for first 3 scenes (PARALLEL) ──
+    print("Generating Imagen 4 sketches in parallel...")
+
+    def sketch_scene(args):
+        i, scene = args
         try:
             print(f"  Drawing sketch for scene {i+1}...")
-            scene["image_base64"] = generate_scene_sketch(scene)
-            print(f"  ✓ Scene {i+1} sketch done")
+            result = generate_scene_sketch(scene)
+            print(f"  ✓ Scene {i+1} done")
+            return i, result
         except Exception as e:
-            print(f"  ✗ Scene {i+1} sketch failed: {e}")
-            scene["image_base64"] = None
+            print(f"  ✗ Scene {i+1} failed: {e}")
+            return i, None
+
+    sketch_targets = [(i, scenes[i]) for i in range(min(3, len(scenes)))]
+    sketch_results = {}
+
+    with ThreadPoolExecutor(max_workers=3) as executor:
+        futures = {executor.submit(sketch_scene, args): args[0] for args in sketch_targets}
+        for future in as_completed(futures):
+            i, img = future.result()
+            sketch_results[i] = img
+
+    for i, scene in enumerate(scenes):
+        scene["image_base64"] = sketch_results.get(i, None)
 
     meta = {"creator": creator_name or "Custom (from video)"}
     return jsonify({"scenes": scenes, "meta": meta})
